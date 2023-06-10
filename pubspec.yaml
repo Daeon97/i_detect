@@ -1,0 +1,36 @@
+name: i_detect
+description: A prototype for a tracking and speed limit monitoring and alerting app
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  mqtt_client: ^10.0.0
+  typed_data: ^1.3.2
+  json_annotation: ^4.8.1
+  flutter_dotenv: ^5.1.0
+  get_it: ^7.6.0
+  dartz: ^0.10.1
+  mapbox_gl: ^0.16.0
+  geolocator: ^9.0.2
+  bloc: ^8.1.2
+  flutter_bloc: ^8.1.3
+  equatable: ^2.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  json_serializable: ^6.7.0
+  build_runner: ^2.4.5
+  very_good_analysis: ^5.0.0+1
+
+flutter:
+  uses-material-design: true
