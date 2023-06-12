@@ -11,8 +11,6 @@ class LocationService {
   Future<LocationPermission> get locationPermission =>
       Geolocator.requestPermission();
 
-  Future<Position?> get lastKnownPosition => Geolocator.getLastKnownPosition();
-
   Stream<Position> get currentPosition => Geolocator.getPositionStream(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.bestForNavigation,

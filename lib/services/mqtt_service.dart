@@ -8,19 +8,20 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 
 class MqttService {
   MqttService({
-    required this.securityContext,
-    required this.mqttServerClient,
-  });
+    required SecurityContext securityContext,
+    required MqttServerClient mqttServerClient,
+  })  : _mqttServerClient = mqttServerClient,
+        _securityContext = securityContext;
 
-  final SecurityContext securityContext;
-  final MqttServerClient mqttServerClient;
+  final SecurityContext _securityContext;
+  final MqttServerClient _mqttServerClient;
 
   Future<void> establishSecurityContext({
     required String rootCertificateAuthorityAssetPath,
     required String privateKeyAssetPath,
     required String deviceCertificateAssetPath,
   }) async {
-    securityContext
+    _securityContext
       ..setClientAuthoritiesBytes(
         (await rootBundle.load(
           rootCertificateAuthorityAssetPath,
@@ -42,8 +43,8 @@ class MqttService {
             .buffer
             .asUint8List(),
       );
-    mqttServerClient
-      ..securityContext = securityContext
+    _mqttServerClient
+      ..securityContext = _securityContext
       ..secure = true;
   }
 
@@ -57,7 +58,7 @@ class MqttService {
     required String clientId,
     required bool enableLogging,
   }) {
-    mqttServerClient
+    _mqttServerClient
       ..logging(
         on: enableLogging,
       )
@@ -74,21 +75,21 @@ class MqttService {
     String? username,
     String? password,
   }) =>
-      mqttServerClient.connect(
+      _mqttServerClient.connect(
         username,
         password,
       );
 
-  void disconnectFromBroker() => mqttServerClient.disconnect();
+  void disconnectFromBroker() => _mqttServerClient.disconnect();
 
   Stream<List<MqttReceivedMessage<MqttMessage>>>? get messagesFromBroker =>
-      mqttServerClient.updates;
+      _mqttServerClient.updates;
 
   Subscription? subscribeToTopic({
     required String topic,
     required MqttQos qualityOfService,
   }) =>
-      mqttServerClient.subscribe(
+      _mqttServerClient.subscribe(
         topic,
         qualityOfService,
       );
@@ -97,7 +98,7 @@ class MqttService {
     required String topic,
     required bool acknowledgeUnsubscription,
   }) =>
-      mqttServerClient.unsubscribe(
+      _mqttServerClient.unsubscribe(
         topic,
         expectAcknowledge: acknowledgeUnsubscription,
       );
