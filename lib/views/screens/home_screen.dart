@@ -8,6 +8,7 @@ import 'package:i_detect/cubits/location_details_cubit/location_details_cubit.da
 import 'package:i_detect/errors/location_failure.dart';
 import 'package:i_detect/views/widgets/bottom_sheet_content.dart';
 import 'package:i_detect/views/widgets/compass_view.dart';
+import 'package:i_detect/views/widgets/details_view.dart';
 import 'package:i_detect/views/widgets/toggler_view.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
@@ -25,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     _animateTo = ValueNotifier<AnimateTo?>(
-      AnimateTo.thingLocation,
+      null,
     );
     BlocProvider.of<LocationDetailsCubit>(context)
         .startListeningLocationDetails();
@@ -143,14 +144,29 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   styleUri: MapboxStyles.SATELLITE_STREETS,
                 ),
-                BlocBuilder<LocationDetailsCubit, LocationDetailsState>(
-                  builder: (_, locationDetailsState) =>
-                      locationDetailsState is GotLocationDetailsState
-                          ? CompassView(
-                              bearing: locationDetailsState.position.heading,
-                              heading: locationDetailsState.position.heading,
-                            )
-                          : const SizedBox.shrink(),
+                ValueListenableBuilder<AnimateTo?>(
+                  valueListenable: _animateTo,
+                  builder: (_, animateToValue, __) => animateToValue ==
+                          AnimateTo.userLocation
+                      ? BlocBuilder<LocationDetailsCubit, LocationDetailsState>(
+                          builder: (_, locationDetailsState) =>
+                              locationDetailsState is GotLocationDetailsState
+                                  ? CompassView(
+                                      bearing:
+                                          locationDetailsState.position.heading,
+                                      heading:
+                                          locationDetailsState.position.heading,
+                                    )
+                                  : const SizedBox.shrink(),
+                        )
+                      : BlocBuilder<DetailsCubit, DetailsState>(
+                          builder: (_, detailsState) =>
+                              detailsState is LoadedDetailsState
+                                  ? DetailsView(
+                                      details: detailsState.details,
+                                    )
+                                  : const SizedBox.shrink(),
+                        ),
                 ),
                 TogglerView(
                   animateToListenable: _animateTo,

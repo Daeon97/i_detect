@@ -7,17 +7,20 @@ import 'package:flutter/material.dart';
 
 class CompassView extends StatefulWidget {
   const CompassView({
-    required this.bearing,
-    required this.heading,
+    required double? bearing,
+    required double heading,
     super.key,
-    this.foregroundColor = Colors.white,
-    this.bearingColor = Colors.red,
-  });
+    Color foregroundColor = Colors.white,
+    Color bearingColor = Colors.blue,
+  })  : _bearingColor = bearingColor,
+        _foregroundColor = foregroundColor,
+        _heading = heading,
+        _bearing = bearing;
 
-  final double? bearing;
-  final double heading;
-  final Color foregroundColor;
-  final Color bearingColor;
+  final double? _bearing;
+  final double _heading;
+  final Color _foregroundColor;
+  final Color _bearingColor;
 
   @override
   State<CompassView> createState() => _CompassViewState();
@@ -46,24 +49,24 @@ class _CompassViewState extends State<CompassView> {
               // Rose Painter
               CustomPaint(
                 painter: _CompassViewPainter(
-                  heading: widget.heading,
-                  foregroundColor: widget.foregroundColor,
+                  heading: widget._heading,
+                  foregroundColor: widget._foregroundColor,
                 ),
               ),
 
               // Bearing Indicator
-              if (widget.bearing != null)
+              if (widget._bearing != null)
                 Padding(
                   padding: const EdgeInsets.all(
                     35,
                   ),
                   child: Transform.rotate(
-                    angle: (widget.bearing! - widget.heading).toRadians(),
+                    angle: (widget._bearing! - widget._heading).toRadians(),
                     child: Align(
                       alignment: Alignment.topCenter,
                       child: Icon(
                         CupertinoIcons.arrowtriangle_up_fill,
-                        color: widget.bearingColor,
+                        color: widget._bearingColor,
                         size: 20,
                       ),
                     ),

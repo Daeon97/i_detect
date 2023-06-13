@@ -1,6 +1,8 @@
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, lines_longer_than_80_chars
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:i_detect/cubits/details_cubit/details_cubit.dart';
 
 enum AnimateTo { userLocation, thingLocation }
 
@@ -27,10 +29,10 @@ class _TogglerViewState extends State<TogglerView> {
   Widget build(BuildContext context) => Align(
         alignment: AlignmentDirectional.centerEnd,
         child: Container(
-          width: 50,
+          width: 40,
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(
-              0.1,
+              0.5,
             ),
             borderRadius: BorderRadiusDirectional.circular(
               10,
@@ -43,26 +45,46 @@ class _TogglerViewState extends State<TogglerView> {
               3,
               (index) => index == 0 || index == 2
                   ? InkWell(
-                      splashColor: Colors.black.withOpacity(
-                        0.5,
-                      ),
-                      radius: 16,
                       customBorder: RoundedRectangleBorder(
                         borderRadius: BorderRadiusDirectional.circular(
                           10,
                         ),
                       ),
                       onTap: () {
-                        index == 0
-                            ? widget._animateToListenable.value =
-                                AnimateTo.userLocation
-                            : widget._animateToListenable.value =
+                        if (index == 0) {
+                          widget._animateToListenable.value =
+                              AnimateTo.userLocation;
+                        } else if (index == 2) {
+                          final detailsState =
+                              BlocProvider.of<DetailsCubit>(context).state;
+                          if (detailsState is LoadedDetailsState) {
+                            widget._animateToListenable.value =
                                 AnimateTo.thingLocation;
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                dismissDirection: DismissDirection.startToEnd,
+                                backgroundColor:
+                                    detailsState is FailedToLoadDetailsState
+                                        ? Colors.red
+                                        : Colors.blue,
+                                content: Text(
+                                  detailsState is FailedToLoadDetailsState
+                                      ? detailsState.errorMessage
+                                      : 'It is either data is still loading or there is no data',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        }
                       },
                       child: ValueListenableBuilder<AnimateTo?>(
                         valueListenable: widget._animateToListenable,
                         builder: (_, animateToValue, __) => Container(
-                          width: 50,
+                          width: 40,
                           padding: const EdgeInsetsDirectional.symmetric(
                             vertical: 8,
                           ),
@@ -74,9 +96,7 @@ class _TogglerViewState extends State<TogglerView> {
                                           index == 2 &&
                                               animateToValue ==
                                                   AnimateTo.thingLocation
-                                      ? Colors.black.withOpacity(
-                                          0.8,
-                                        )
+                                      ? Colors.blue
                                       : null,
                                   borderRadius: index == 0
                                       ? const BorderRadiusDirectional.vertical(
@@ -94,9 +114,18 @@ class _TogglerViewState extends State<TogglerView> {
                           child: Icon(
                             index == 0 ? Icons.person : Icons.account_tree,
                             size: 28,
-                            color: Colors.white.withOpacity(
-                              0.7,
-                            ),
+                            color: index == 0 &&
+                                        animateToValue ==
+                                            AnimateTo.userLocation ||
+                                    index == 2 &&
+                                        animateToValue ==
+                                            AnimateTo.thingLocation
+                                ? Colors.white.withOpacity(
+                                    0.7,
+                                  )
+                                : Colors.black.withOpacity(
+                                    0.8,
+                                  ),
                           ),
                         ),
                       ),

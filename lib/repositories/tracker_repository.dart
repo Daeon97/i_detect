@@ -21,7 +21,7 @@ class TrackerRepository {
     final topic = dotenv.env['TOPIC']!;
     const port = 8883;
     const keepAlivePeriod = 20;
-    const clientId = 'bus_trackr';
+    const clientId = 'i_detect';
 
     const certificatesPath = 'assets/certificates';
 

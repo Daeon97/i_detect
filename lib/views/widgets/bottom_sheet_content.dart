@@ -6,14 +6,16 @@ import 'package:i_detect/errors/location_failure.dart';
 class BottomSheetContent extends StatelessWidget {
   const BottomSheetContent({
     super.key,
-    this.locationFailure,
-    this.customMessage,
-    this.action,
-  });
+    LocationFailure? locationFailure,
+    String? customMessage,
+    void Function()? action,
+  })  : _action = action,
+        _customMessage = customMessage,
+        _locationFailure = locationFailure;
 
-  final LocationFailure? locationFailure;
-  final String? customMessage;
-  final void Function()? action;
+  final LocationFailure? _locationFailure;
+  final String? _customMessage;
+  final void Function()? _action;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -21,7 +23,7 @@ class BottomSheetContent extends StatelessWidget {
           16,
         ),
         decoration: BoxDecoration(
-          color: locationFailure != null ? Colors.red : Colors.white,
+          color: _locationFailure != null ? Colors.red : Colors.white,
           borderRadius: const BorderRadiusDirectional.vertical(
             top: Radius.circular(
               16,
@@ -31,13 +33,13 @@ class BottomSheetContent extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            if (locationFailure != null || customMessage != null)
+            if (_locationFailure != null || _customMessage != null)
               Expanded(
                 child: Text(
-                  locationFailure != null
-                      ? locationFailure!.message
-                      : customMessage!,
-                  style: locationFailure != null
+                  _locationFailure != null
+                      ? _locationFailure!.message
+                      : _customMessage!,
+                  style: _locationFailure != null
                       ? const TextStyle(
                           color: Colors.white,
                         )
@@ -46,26 +48,27 @@ class BottomSheetContent extends StatelessWidget {
               )
             else
               const SizedBox.shrink(),
-            if (locationFailure != null || customMessage != null)
+            if (_locationFailure != null || _customMessage != null)
               const SizedBox(
                 width: 16,
               )
             else
               const SizedBox.shrink(),
-            if (locationFailure != null || customMessage != null)
+            if (_locationFailure != null || _customMessage != null)
               ElevatedButton(
-                style: locationFailure != null
+                style: _locationFailure != null
                     ? const ButtonStyle(
                         backgroundColor: MaterialStatePropertyAll<Color>(
                           Colors.white,
                         ),
                       )
                     : null,
-                onPressed: action ?? () => Navigator.of(context).pop(),
+                onPressed: _action ?? () => Navigator.of(context).pop(),
                 child: Text(
                   'Okay',
                   style: TextStyle(
-                    color: locationFailure != null ? Colors.blue : Colors.white,
+                    color:
+                        _locationFailure != null ? Colors.blue : Colors.white,
                   ),
                 ),
               )
