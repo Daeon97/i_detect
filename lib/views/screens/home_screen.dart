@@ -36,7 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    _mapboxMap?.dispose();
     BlocProvider.of<LocationDetailsCubit>(context)
         .stopListeningLocationDetails();
     BlocProvider.of<DetailsCubit>(context).stopListeningDetails();
@@ -146,29 +145,33 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 ValueListenableBuilder<AnimateTo?>(
                   valueListenable: _animateTo,
-                  builder: (_, animateToValue, __) => animateToValue ==
-                          AnimateTo.userLocation
-                      ? BlocBuilder<LocationDetailsCubit, LocationDetailsState>(
-                          builder: (_, locationDetailsState) =>
-                              locationDetailsState is GotLocationDetailsState
-                                  ? CompassView(
-                                      bearing:
-                                          locationDetailsState.position.heading,
-                                      heading:
-                                          locationDetailsState.position.heading,
-                                    )
-                                  : const SizedBox.shrink(),
-                        )
-                      : BlocBuilder<DetailsCubit, DetailsState>(
-                          builder: (_, detailsState) =>
-                              detailsState is LoadedDetailsState
-                                  ? DetailsView(
-                                      details: detailsState.details,
-                                    )
-                                  : const SizedBox.shrink(),
-                        ),
+                  builder: (_, animateToValue, __) => animateToValue != null
+                      ? animateToValue == AnimateTo.userLocation
+                          ? BlocBuilder<LocationDetailsCubit,
+                              LocationDetailsState>(
+                              builder: (_, locationDetailsState) =>
+                                  locationDetailsState
+                                          is GotLocationDetailsState
+                                      ? CompassView(
+                                          bearing: locationDetailsState
+                                              .position.heading,
+                                          heading: locationDetailsState
+                                              .position.heading,
+                                        )
+                                      : const SizedBox.shrink(),
+                            )
+                          : BlocBuilder<DetailsCubit, DetailsState>(
+                              builder: (_, detailsState) =>
+                                  detailsState is LoadedDetailsState
+                                      ? DetailsView(
+                                          details: detailsState.details,
+                                        )
+                                      : const SizedBox.shrink(),
+                            )
+                      : const SizedBox.shrink(),
                 ),
                 TogglerView(
+                  mapboxMap: _mapboxMap,
                   animateToListenable: _animateTo,
                 ),
               ],

@@ -3,15 +3,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:i_detect/cubits/details_cubit/details_cubit.dart';
+import 'package:i_detect/cubits/location_details_cubit/location_details_cubit.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 enum AnimateTo { userLocation, thingLocation }
 
 class TogglerView extends StatefulWidget {
   const TogglerView({
+    required MapboxMap? mapboxMap,
     required ValueNotifier<AnimateTo?> animateToListenable,
     super.key,
-  }) : _animateToListenable = animateToListenable;
+  })  : _mapboxMap = mapboxMap,
+        _animateToListenable = animateToListenable;
 
+  final MapboxMap? _mapboxMap;
   final ValueNotifier<AnimateTo?> _animateToListenable;
 
   @override
@@ -21,6 +26,7 @@ class TogglerView extends StatefulWidget {
 class _TogglerViewState extends State<TogglerView> {
   @override
   void dispose() {
+    widget._mapboxMap?.dispose();
     widget._animateToListenable.dispose();
     super.dispose();
   }
@@ -52,14 +58,61 @@ class _TogglerViewState extends State<TogglerView> {
                       ),
                       onTap: () {
                         if (index == 0) {
-                          widget._animateToListenable.value =
-                              AnimateTo.userLocation;
+                          final locationDetailsState =
+                              BlocProvider.of<LocationDetailsCubit>(context)
+                                  .state;
+                          if (locationDetailsState is GotLocationDetailsState) {
+                            widget._animateToListenable.value =
+                                AnimateTo.userLocation;
+                            widget._mapboxMap
+                              ?..easeTo(
+                                CameraOptions(
+                                  center: Point(
+                                    coordinates: Position.named(
+                                      lat: locationDetailsState
+                                          .position.latitude,
+                                      lng: locationDetailsState
+                                          .position.longitude,
+                                    ),
+                                  ).toJson(),
+                                  zoom: 15,
+                                ),
+                                MapAnimationOptions(
+                                  duration: 1000,
+                                ),
+                              )
+                              ..location.updateSettings(
+                                LocationComponentSettings(
+                                  enabled: true,
+                                ),
+                              );
+                          }
                         } else if (index == 2) {
                           final detailsState =
                               BlocProvider.of<DetailsCubit>(context).state;
                           if (detailsState is LoadedDetailsState) {
                             widget._animateToListenable.value =
                                 AnimateTo.thingLocation;
+                            widget._mapboxMap
+                              ?..easeTo(
+                                CameraOptions(
+                                  center: Point(
+                                    coordinates: Position.named(
+                                      lat: detailsState.details.latitude,
+                                      lng: detailsState.details.longitude,
+                                    ),
+                                  ).toJson(),
+                                  zoom: 15,
+                                ),
+                                MapAnimationOptions(
+                                  duration: 1000,
+                                ),
+                              )
+                              ..location.updateSettings(
+                                LocationComponentSettings(
+                                  enabled: true,
+                                ),
+                              );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
