@@ -24,7 +24,9 @@ class DetailsCubit extends Cubit<DetailsState> {
   StreamSubscription<Either<BrokerFailure, Details>>? _streamSubscription;
 
   void startListeningDetails() {
-    _loadingDetails();
+    emit(
+      const LoadingDetailsState(),
+    );
 
     if (_streamSubscription != null) {
       _streamSubscription!.cancel();
@@ -42,10 +44,6 @@ class DetailsCubit extends Cubit<DetailsState> {
       },
     );
   }
-
-  void _loadingDetails() => emit(
-        const LoadingDetailsState(),
-      );
 
   void _failedToLoadDetails(BrokerFailure brokerFailure) => emit(
         FailedToLoadDetailsState(

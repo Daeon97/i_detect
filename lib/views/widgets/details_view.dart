@@ -36,7 +36,7 @@ class DetailsView extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: List<Widget>.generate(
-              4,
+              5,
               (index) => Expanded(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -44,10 +44,11 @@ class DetailsView extends StatelessWidget {
                   children: [
                     Icon(
                       switch (index) {
-                        0 => Icons.numbers,
-                        1 => Icons.speed,
+                        0 => Icons.thermostat,
+                        1 => Icons.heat_pump,
                         2 => Icons.gps_not_fixed,
-                        _ => Icons.gps_fixed
+                        3 => Icons.gps_fixed,
+                        _ => Icons.battery_std
                       },
                       color: Colors.white,
                     ),
@@ -57,10 +58,11 @@ class DetailsView extends StatelessWidget {
                     Expanded(
                       child: Text(
                         switch (index) {
-                          0 => 'Plate Number: ${_details.plateNumber}',
-                          1 => 'Current Speed: ${_details.speedLimit} Km/hr',
-                          2 => 'Current Latitude: ${_details.latitude} °E/W',
-                          _ => 'Current Longitude: ${_details.longitude} °N/S'
+                          0 => 'Temperature: ${_details.temperature}°C',
+                          1 => 'Humidity: ${_details.humidity}%',
+                          2 => 'Latitude: ${_details.latitude}°E/W',
+                          3 => 'Longitude: ${_details.longitude}°N/S',
+                          _ => 'Battery: ${_details.battery}%'
                         },
                         style: const TextStyle(
                           color: Colors.white,

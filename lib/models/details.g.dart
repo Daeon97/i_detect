@@ -7,15 +7,17 @@ part of 'details.dart';
 // **************************************************************************
 
 Details _$DetailsFromJson(Map<String, dynamic> json) => Details(
-      plateNumber: json['plate_no'] as String,
-      speedLimit: json['speed'] as num,
+      temperature: json['temperature'] as num,
+      humidity: json['humidity'] as num,
       latitude: json['lat'] as num,
-      longitude: json['lng'] as num,
+      longitude: json['long'] as num,
+      battery: json['battery'] as num,
     );
 
 Map<String, dynamic> _$DetailsToJson(Details instance) => <String, dynamic>{
-      'plate_no': instance.plateNumber,
-      'speed': instance.speedLimit,
+      'temperature': instance.temperature,
+      'humidity': instance.humidity,
       'lat': instance.latitude,
-      'lng': instance.longitude,
+      'long': instance.longitude,
+      'battery': instance.battery,
     };

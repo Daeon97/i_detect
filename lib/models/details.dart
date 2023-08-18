@@ -7,26 +7,30 @@ part 'details.g.dart';
 @JsonSerializable()
 class Details {
   const Details({
-    required this.plateNumber,
-    required this.speedLimit,
+    required this.temperature,
+    required this.humidity,
     required this.latitude,
     required this.longitude,
+    required this.battery,
   });
 
   factory Details.fromJson(Map<String, dynamic> json) =>
       _$DetailsFromJson(json);
 
-  @JsonKey(name: 'plate_no')
-  final String plateNumber;
+  @JsonKey(name: 'temperature')
+  final num temperature;
 
-  @JsonKey(name: 'speed')
-  final num speedLimit;
+  @JsonKey(name: 'humidity')
+  final num humidity;
 
   @JsonKey(name: 'lat')
   final num latitude;
 
-  @JsonKey(name: 'lng')
+  @JsonKey(name: 'long')
   final num longitude;
+
+  @JsonKey(name: 'battery')
+  final num battery;
 
   Map<String, dynamic> toJson() => _$DetailsToJson(this);
 }
