@@ -22,7 +22,7 @@ dependencies:
   bloc: ^8.1.2
   flutter_bloc: ^8.1.3
   equatable: ^2.0.5
-  mapbox_maps_flutter: ^0.4.4
+  google_maps_flutter: ^2.4.0
 
 dev_dependencies:
   flutter_test:
@@ -30,9 +30,20 @@ dev_dependencies:
   json_serializable: ^6.7.0
   build_runner: ^2.4.5
   very_good_analysis: ^5.0.0+1
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.2
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path_android: "assets/images/launcher_image.png"
+
+flutter_native_splash:
+  background_image: "assets/images/launcher_image.png"
 
 flutter:
   uses-material-design: true
   assets:
     - assets/certificates/
+    - assets/images/
     - .env

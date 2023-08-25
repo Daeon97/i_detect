@@ -12,3 +12,6 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+
+# String.xml containing only our google map API key
+app/src/main/res/values/strings.xml

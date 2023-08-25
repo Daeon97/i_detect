@@ -15,7 +15,7 @@ class DetailsView extends StatelessWidget {
   Widget build(BuildContext context) => Align(
         alignment: AlignmentDirectional.topEnd,
         child: Container(
-          width: 250,
+          width: 140,
           height: 170,
           margin: const EdgeInsetsDirectional.symmetric(
             vertical: 32,
@@ -26,7 +26,7 @@ class DetailsView extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: Colors.black.withOpacity(
-              0.2,
+              0.6,
             ),
             borderRadius: BorderRadiusDirectional.circular(
               32,
@@ -58,12 +58,13 @@ class DetailsView extends StatelessWidget {
                     Expanded(
                       child: Text(
                         switch (index) {
-                          0 => 'Temperature: ${_details.temperature}°C',
-                          1 => 'Humidity: ${_details.humidity}%',
-                          2 => 'Latitude: ${_details.latitude}°E/W',
-                          3 => 'Longitude: ${_details.longitude}°N/S',
-                          _ => 'Battery: ${_details.battery}%'
+                          0 => '${_details.temperature}°C',
+                          1 => '${_details.humidity}%',
+                          2 => '${_details.latitude}°',
+                          3 => '${_details.longitude}°',
+                          _ => '${_details.battery}%'
                         },
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           color: Colors.white,
                         ),
