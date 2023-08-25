@@ -130,6 +130,54 @@ class _HomeScreenState extends State<HomeScreen> {
                       )
                     : const SizedBox.shrink(),
               ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                  ),
+                  child: BlocBuilder<DetailsCubit, DetailsState>(
+                    builder: (_, detailsState) => detailsState
+                            is LoadedDetailsState
+                        ? ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStatePropertyAll<Color>(
+                                Colors.black.withOpacity(
+                                  0.6,
+                                ),
+                              ),
+                              shape: const MaterialStatePropertyAll<
+                                  OutlinedBorder>(
+                                CircleBorder(),
+                              ),
+                            ),
+                            onPressed: () async =>
+                                (await _googleMapController.future)
+                                    .animateCamera(
+                              CameraUpdate.newCameraPosition(
+                                CameraPosition(
+                                  target: LatLng(
+                                    detailsState.details.latitude.toDouble(),
+                                    detailsState.details.longitude.toDouble(),
+                                  ),
+                                  zoom: 16,
+                                ),
+                              ),
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.all(
+                                8.0,
+                              ),
+                              child: Icon(
+                                Icons.gps_fixed,
+                                size: 32,
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
