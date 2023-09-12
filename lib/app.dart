@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:i_detect/cubits/details_cubit/details_cubit.dart';
 import 'package:i_detect/injection_container.dart';
 import 'package:i_detect/views/screens/home_screen.dart';
@@ -27,6 +28,15 @@ class App extends StatelessWidget {
         builder: (_) {
           switch (settings.name) {
             case '/':
+              return FutureBuilder(
+                future: Future<void>.delayed(
+                  const Duration(
+                    seconds: 2,
+                  ),
+                  FlutterNativeSplash.remove,
+                ),
+                builder: (_, __) => const HomeScreen(),
+              );
             default:
               return const HomeScreen();
           }
