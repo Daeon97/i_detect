@@ -4,18 +4,19 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:i_detect/clients/mqtt_client.dart' as mqtt_client;
 import 'package:i_detect/errors/custom_exception.dart';
 import 'package:i_detect/models/certificate.dart';
 import 'package:i_detect/models/details.dart';
-import 'package:i_detect/services/mqtt_service.dart';
+import 'package:i_detect/services/storage_service.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 
 class TrackerService {
   const TrackerService({
-    required MqttService mqttService,
-  }) : _mqttService = mqttService;
+    required mqtt_client.MqttClient mqttClient,
+  }) : _mqttClient = mqttClient;
 
-  final MqttService _mqttService;
+  final mqtt_client.MqttClient _mqttClient;
 
   Stream<Details> messageStream({
     required String topic,
@@ -30,13 +31,13 @@ class TrackerService {
 
     streamController = StreamController<Details>(
       onListen: () async {
-        await _mqttService.establishSecurityContext(
+        await _mqttClient.establishSecurityContext(
           rootCertificateAuthorityAssetPath:
               certificate.rootCertificateAuthorityAssetPath,
           privateKeyAssetPath: certificate.privateKeyAssetPath,
           deviceCertificateAssetPath: certificate.deviceCertificateAssetPath,
         );
-        _mqttService.ensureAllOtherImportantStuffInitialized(
+        _mqttClient.ensureAllOtherImportantStuffInitialized(
           enableLogging: kDebugMode,
           port: port,
           keepAlivePeriod: keepAlivePeriod,
@@ -59,7 +60,7 @@ class TrackerService {
         );
 
         try {
-          final connectionStatus = await _mqttService.connectToBroker();
+          final connectionStatus = await _mqttClient.connectToBroker();
 
           if (connectionStatus?.state != MqttConnectionState.connecting &&
               connectionStatus?.state != MqttConnectionState.connected) {
@@ -81,7 +82,7 @@ class TrackerService {
         await mqttReceivedMessagesStreamSubscription?.cancel();
         await streamController.sink.close();
         await streamController.close();
-        _mqttService.disconnectFromBroker();
+        _mqttClient.disconnectFromBroker();
       },
     );
     return streamController.stream;
@@ -90,7 +91,7 @@ class TrackerService {
   void _onConnectedToBroker(
     String topic,
   ) {
-    _mqttService.subscribeToTopic(
+    _mqttClient.subscribeToTopic(
       topic: topic,
       qualityOfService: MqttQos.atMostOnce,
     );
@@ -103,7 +104,7 @@ class TrackerService {
   ) {
     StreamSubscription<List<MqttReceivedMessage<MqttMessage>>>?
         mqttReceivedMessagesStreamSubscription;
-    final messagesFromBroker = _mqttService.messagesFromBroker;
+    final messagesFromBroker = _mqttClient.messagesFromBroker;
 
     if (messagesFromBroker != null) {
       mqttReceivedMessagesStreamSubscription = messagesFromBroker.listen(
@@ -121,11 +122,19 @@ class TrackerService {
                   uint8List,
                 );
                 final json = jsonDecode(utf8Decoded) as Map<String, dynamic>;
-                streamSink.add(
-                  Details.fromJson(
-                    json,
-                  ),
-                );
+                if (json.containsKey('no_message')) {
+                  streamSink.addError(
+                    const NoMessagesFromBrokerException(
+                      message: 'No data',
+                    ),
+                  );
+                } else {
+                  streamSink.add(
+                    Details.fromJson(
+                      json,
+                    ),
+                  );
+                }
               } catch (_) {
                 streamSink.addError(
                   const BadMessageFormatException(

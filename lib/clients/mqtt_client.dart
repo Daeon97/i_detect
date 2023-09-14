@@ -6,8 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
-class MqttService {
-  MqttService({
+class MqttClient {
+  MqttClient({
     required SecurityContext securityContext,
     required MqttServerClient mqttServerClient,
   })  : _mqttServerClient = mqttServerClient,

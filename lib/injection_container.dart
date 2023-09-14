@@ -4,9 +4,10 @@ import 'dart:io';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
+import 'package:i_detect/clients/mqtt_client.dart';
 import 'package:i_detect/cubits/details_cubit/details_cubit.dart';
 import 'package:i_detect/repositories/tracker_repository.dart';
-import 'package:i_detect/services/mqtt_service.dart';
+import 'package:i_detect/services/storage_service.dart';
 import 'package:i_detect/services/tracker_service.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
@@ -26,20 +27,24 @@ void initDependencyInjection() {
     ..registerLazySingleton<TrackerRepository>(
       () => TrackerRepository(
         trackerService: sl(),
+        storageService: sl(),
       ),
     )
 
     // Services
     ..registerLazySingleton<TrackerService>(
       () => TrackerService(
-        mqttService: sl(),
+        mqttClient: sl(),
       ),
     )
-    ..registerLazySingleton<MqttService>(
-      () => MqttService(
+    ..registerLazySingleton<MqttClient>(
+      () => MqttClient(
         securityContext: sl(),
         mqttServerClient: sl(),
       ),
+    )
+    ..registerLazySingleton<StorageService>(
+      StorageService.new,
     )
 
     // External

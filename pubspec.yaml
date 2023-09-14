@@ -24,6 +24,7 @@ dependencies:
   equatable: ^2.0.5
   google_maps_flutter: ^2.4.0
   flutter_native_splash: ^2.3.2
+  shared_preferences: ^2.2.1
 
 dev_dependencies:
   flutter_test:

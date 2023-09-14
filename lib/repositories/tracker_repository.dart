@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -8,20 +9,24 @@ import 'package:i_detect/errors/broker_failure.dart';
 import 'package:i_detect/errors/custom_exception.dart';
 import 'package:i_detect/models/certificate.dart';
 import 'package:i_detect/models/details.dart';
+import 'package:i_detect/services/storage_service.dart';
 import 'package:i_detect/services/tracker_service.dart';
 
 class TrackerRepository {
   const TrackerRepository({
     required TrackerService trackerService,
-  }) : _trackerService = trackerService;
+    required StorageService storageService,
+  })  : _trackerService = trackerService,
+        _storageService = storageService;
 
   final TrackerService _trackerService;
+  final StorageService _storageService;
 
   Stream<Either<BrokerFailure, Details>> get trackerStream {
     final topic = dotenv.env['TOPIC']!;
     const port = 8883;
     const keepAlivePeriod = 20;
-    const clientId = 'efortainer';
+    const clientId = 'efotainer';
 
     const certificatesPath = 'assets/certificates';
 
@@ -51,19 +56,41 @@ class TrackerRepository {
           certificate: certificate,
         )
             .listen(
-          (details) {
+          (details) async {
+            final jsonString = jsonEncode(
+              details.toJson(),
+            );
+            await _storageService.write(
+              key: 'details',
+              value: jsonString,
+            );
             streamController.sink.add(
               Right(
                 details,
               ),
             );
           },
-          onError: (dynamic error) {
-            streamController.sink.add(
-              Left(
-                _computeFailure(error),
-              ),
-            );
+          onError: (dynamic error) async {
+            final brokerFailure = _computeFailure(error);
+            final jsonString = await _storageService.read('details');
+
+            if (brokerFailure is NoMessagesFromBrokerFailure &&
+                jsonString != null) {
+              final json = jsonDecode(jsonString) as Map<String, dynamic>;
+              streamController.sink.add(
+                Right(
+                  Details.fromJson(
+                    json,
+                  ),
+                ),
+              );
+            } else {
+              streamController.sink.add(
+                Left(
+                  brokerFailure,
+                ),
+              );
+            }
           },
         );
       },
