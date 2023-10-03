@@ -1,0 +1,88 @@
+{
+  "api": {
+    "efotainer": {
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [],
+          "defaultAuthentication": {
+            "apiKeyConfig": {
+              "apiKeyExpirationDate": "2024-10-02T10:00:29.650Z",
+              "apiKeyExpirationDays": 365,
+              "description": "API key for Efotainer"
+            },
+            "authenticationType": "API_KEY"
+          }
+        }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_storage_iotcoretodynamodbfunctionforefotainerEfotainer1VEDNASSC1ZTF_arn": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "iotcoretodynamodbfunctionforefotainerEfotainer1VEDNASSC1ZTF"
+        }
+      ]
+    },
+    "AMPLIFY_storage_iotcoretodynamodbfunctionforefotainerEfotainer1VEDNASSC1ZTF_partitionKeyName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "iotcoretodynamodbfunctionforefotainerEfotainer1VEDNASSC1ZTF"
+        }
+      ]
+    },
+    "AMPLIFY_storage_iotcoretodynamodbfunctionforefotainerEfotainer1VEDNASSC1ZTF_partitionKeyType": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "iotcoretodynamodbfunctionforefotainerEfotainer1VEDNASSC1ZTF"
+        }
+      ]
+    },
+    "AMPLIFY_storage_iotcoretodynamodbfunctionforefotainerEfotainer1VEDNASSC1ZTF_region": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "iotcoretodynamodbfunctionforefotainerEfotainer1VEDNASSC1ZTF"
+        }
+      ]
+    },
+    "AMPLIFY_storage_iotcoretodynamodbfunctionforefotainerEfotainer1VEDNASSC1ZTF_sortKeyName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "iotcoretodynamodbfunctionforefotainerEfotainer1VEDNASSC1ZTF"
+        }
+      ]
+    },
+    "AMPLIFY_storage_iotcoretodynamodbfunctionforefotainerEfotainer1VEDNASSC1ZTF_sortKeyType": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "iotcoretodynamodbfunctionforefotainerEfotainer1VEDNASSC1ZTF"
+        }
+      ]
+    },
+    "AMPLIFY_storage_iotcoretodynamodbfunctionforefotainerEfotainer1VEDNASSC1ZTF_tableName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "iotcoretodynamodbfunctionforefotainerEfotainer1VEDNASSC1ZTF"
+        }
+      ]
+    }
+  },
+  "storage": {
+    "iotcoretodynamodbfunctionforefotainerEfotainer1VEDNASSC1ZTF": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "DynamoDB",
+      "serviceType": "imported"
+    }
+  }
+}

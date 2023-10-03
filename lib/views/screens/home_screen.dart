@@ -4,10 +4,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:i_detect/cubits/details_cubit/details_cubit.dart';
-import 'package:i_detect/views/widgets/details_view.dart';
+import 'package:i_detect/cubits/efotainer_cubit/efotainer_cubit.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,14 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     _googleMapController = Completer();
-    BlocProvider.of<DetailsCubit>(context).startListeningDetails();
+    BlocProvider.of<EfotainerCubit>(context).data;
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    BlocProvider.of<DetailsCubit>(context).stopListeningDetails();
-    super.dispose();
   }
 
   @override
@@ -54,8 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
               CameraUpdate.newCameraPosition(
                 CameraPosition(
                   target: LatLng(
-                    detailsState.details.latitude.toDouble(),
-                    detailsState.details.longitude.toDouble(),
+                    detailsState.efotainer.latitude.toDouble(),
+                    detailsState.efotainer.longitude.toDouble(),
                   ),
                   zoom: 16,
                 ),
@@ -106,8 +98,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 'efortainer',
                               ),
                               position: LatLng(
-                                detailsState.details.latitude.toDouble(),
-                                detailsState.details.longitude.toDouble(),
+                                detailsState.efotainer.latitude.toDouble(),
+                                detailsState.efotainer.longitude.toDouble(),
                               ),
                               icon: switch (
                                   snapshot.hasData && snapshot.data != null) {
@@ -123,13 +115,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              BlocBuilder<DetailsCubit, DetailsState>(
-                builder: (_, detailsState) => detailsState is LoadedDetailsState
-                    ? DetailsView(
-                        details: detailsState.details,
-                      )
-                    : const SizedBox.shrink(),
-              ),
+              // BlocBuilder<DetailsCubit, DetailsState>(
+              //   builder: (_, detailsState) => detailsState is LoadedDetailsState
+              //       ? DetailsView(
+              //           details: detailsState.details,
+              //         )
+              //       : const SizedBox.shrink(),
+              // ),
               Align(
                 alignment: Alignment.bottomRight,
                 child: Padding(
@@ -157,8 +149,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               CameraUpdate.newCameraPosition(
                                 CameraPosition(
                                   target: LatLng(
-                                    detailsState.details.latitude.toDouble(),
-                                    detailsState.details.longitude.toDouble(),
+                                    detailsState.efotainer.latitude.toDouble(),
+                                    detailsState.efotainer.longitude.toDouble(),
                                   ),
                                   zoom: 16,
                                 ),

@@ -1,6 +1,8 @@
+import 'package:amplify_api/amplify_api.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:i_detect/amplifyconfiguration.dart';
 import 'package:i_detect/app.dart';
 import 'package:i_detect/injection_container.dart';
 
@@ -17,6 +19,20 @@ Future<void> _initializeImportantResources() async {
   FlutterNativeSplash.preserve(
     widgetsBinding: widgetsBinding,
   );
-  await dotenv.load();
-  initDependencyInjection();
+  registerServices();
+  await _configureAmplify();
+}
+
+Future<void> _configureAmplify() async {
+  if (!Amplify.isConfigured) {
+    await Amplify.addPlugin(
+      AmplifyAPI(),
+    );
+  }
+
+  try {
+    await Amplify.configure(amplifyconfig);
+  } on AmplifyAlreadyConfiguredException catch (e) {
+    safePrint(e.message);
+  }
 }
