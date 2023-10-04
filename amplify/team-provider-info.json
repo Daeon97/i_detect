@@ -22,6 +22,9 @@
           "sortKeyName": "Timestamp",
           "sortKeyType": "N"
         }
+      },
+      "api": {
+        "efotainer": {}
       }
     }
   }

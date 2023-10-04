@@ -8,15 +8,15 @@ type Query {
 }
 
 type Efotainer {
-    name: String!
-    timestamp: Int!
-    battery: Int!
-    coordinates: Coordinates!
-    humidity: Int!
-    temperature: Int!
+    Name: String!
+    Timestamp: Float!
+    Battery: Int!
+    Coordinates: Coordinates!
+    Humidity: Int!
+    Temperature: Int!
 }
 
 type Coordinates {
-    hash: String!
-    position: [Float!]!
+    Hash: String!
+    Position: [Float!]!
 }
