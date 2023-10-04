@@ -3,10 +3,8 @@
 import 'dart:io';
 
 import 'package:get_it/get_it.dart';
-import 'package:i_detect/cubits/efotainer_cubit/efotainer_cubit.dart';
-import 'package:i_detect/cubits/theme_cubit/theme_cubit.dart';
+import 'package:i_detect/cubits/efotainer_history_cubit/efotainer_history_cubit.dart';
 import 'package:i_detect/repositories/efotainer_repository.dart';
-import 'package:i_detect/repositories/theme_repository.dart';
 import 'package:i_detect/services/database_service.dart';
 
 final sl = GetIt.I;
@@ -15,21 +13,13 @@ void registerServices() {
   sl
 
     // Cubits
-    ..registerFactory<ThemeCubit>(
-      () => ThemeCubit(
-        sl(),
-      ),
-    )
-    ..registerFactory<EfotainerCubit>(
-      () => EfotainerCubit(
+    ..registerFactory<EfotainerHistoryCubit>(
+      () => EfotainerHistoryCubit(
         sl(),
       ),
     )
 
     // Repositories
-    ..registerLazySingleton<ThemeRepository>(
-      ThemeRepositoryImplementation.new,
-    )
     ..registerLazySingleton<EfotainerRepository>(
       () => EfotainerRepositoryImplementation(
         sl(),

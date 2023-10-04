@@ -3,6 +3,9 @@
 const defaultScreenRoute = '/';
 const homeScreenRoute = '/home';
 
+const getDataKey = 'getData';
+const getHistoryKey = 'getHistory';
+
 const name = 'Name';
 const timestamp = 'Timestamp';
 const battery = 'Battery';
@@ -19,4 +22,12 @@ const openingCurlyBrace = '{';
 const closingCurlyBrace = '}';
 
 const noData = 'No data was returned. Please try again later';
-const error = 'An error occurred. Please try again later';
+const error = 'An error occurred';
+const retry = 'Retry';
+
+const _assetsImagesPath = 'assets/images';
+const markerImagePath = '$_assetsImagesPath/marker_image.png';
+const trailImagePath = '$_assetsImagesPath/trail_image.png';
+
+const degreeCelcius = '°C';
+const percentage = '%';

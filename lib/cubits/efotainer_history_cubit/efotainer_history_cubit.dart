@@ -7,24 +7,29 @@ import 'package:equatable/equatable.dart';
 import 'package:i_detect/models/efotainer.dart';
 import 'package:i_detect/models/failure.dart';
 import 'package:i_detect/repositories/efotainer_repository.dart';
+import 'package:i_detect/utils/enums.dart' as enums;
 
-part 'efotainer_state.dart';
+part 'efotainer_history_state.dart';
 
-class EfotainerCubit extends Cubit<EfotainerState> {
-  EfotainerCubit(
+class EfotainerHistoryCubit extends Cubit<EfotainerHistoryState> {
+  EfotainerHistoryCubit(
     EfotainerRepository efotainerRepository,
   )   : _efotainerRepository = efotainerRepository,
         super(
-          const EfotainerInitialState(),
+          const EfotainerHistoryInitialState(),
         );
 
   final EfotainerRepository _efotainerRepository;
 
-  Future<void> get data async {
+  Future<void> getHistory({
+    List<enums.Field>? fields,
+  }) async {
     emit(
-      const LoadingEfotainerState(),
+      const LoadingEfotainerHistoryState(),
     );
-    final result = await _efotainerRepository.data;
+    final result = await _efotainerRepository.getHistory(
+      fields: fields,
+    );
     result.fold(
       _failure,
       _success,
@@ -35,17 +40,17 @@ class EfotainerCubit extends Cubit<EfotainerState> {
     Failure failure,
   ) =>
       emit(
-        FailedToLoadEfotainerState(
-          failure.reason,
+        FailedToLoadEfotainerHistoryState(
+          failure,
         ),
       );
 
   void _success(
-    Efotainer efotainer,
+    List<Efotainer> efotainerHistory,
   ) =>
       emit(
-        LoadedEfotainerState(
-          efotainer,
+        LoadedEfotainerHistoryState(
+          efotainerHistory,
         ),
       );
 }

@@ -1,32 +1,45 @@
 // ignore_for_file: public_member_api_docs
 
-import 'dart:convert';
-
 import 'package:i_detect/models/efotainer.dart';
+import 'package:i_detect/resources/strings.dart';
 import 'package:i_detect/utils/clients/graph_ql_operation_handler.dart';
+import 'package:i_detect/utils/enums.dart' as enums;
+import 'package:i_detect/utils/helpers/graph_ql_document_util.dart';
 
 abstract interface class DatabaseService {
-  Future<Efotainer> get data;
+  Future<Efotainer> getData({
+    List<enums.Field>? fields,
+  });
 
-  Future<List<Efotainer>> get history;
+  Future<List<Efotainer>> getHistory({
+    List<enums.Field>? fields,
+  });
 }
 
 final class AmazonDynamoDBService
     with GraphQLOperationHandler
     implements DatabaseService {
   @override
-  Future<Efotainer> get data =>
+  Future<Efotainer> getData({
+    List<enums.Field>? fields,
+  }) =>
       handleGraphQLOperation<Efotainer, Map<String, dynamic>>(
-        graphQLDocument: '',
-        actualDataResidenceKey: '',
+        graphQLDocument: GraphQLDocumentUtil.getDataQueryDocument(
+          fields: fields,
+        ),
+        actualDataResidenceKey: getDataKey,
         handler: Efotainer.fromJson,
       );
 
   @override
-  Future<List<Efotainer>> get history =>
+  Future<List<Efotainer>> getHistory({
+    List<enums.Field>? fields,
+  }) =>
       handleGraphQLOperation<List<Efotainer>, List<dynamic>>(
-        graphQLDocument: '',
-        actualDataResidenceKey: '',
+        graphQLDocument: GraphQLDocumentUtil.getHistoryQueryDocument(
+          fields: fields,
+        ),
+        actualDataResidenceKey: getHistoryKey,
         handler: (jsonList) => jsonList
             .map(
               (json) => Efotainer.fromJson(

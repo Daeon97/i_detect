@@ -7,13 +7,14 @@ part of 'efotainer.dart';
 // **************************************************************************
 
 Efotainer _$EfotainerFromJson(Map<String, dynamic> json) => Efotainer(
-      name: json['Name'] as String,
-      timestamp: json['Timestamp'] as num,
-      battery: json['Battery'] as num,
-      coordinates:
-          Coordinates.fromJson(json['Coordinates'] as Map<String, dynamic>),
-      humidity: json['Humidity'] as num,
-      temperature: json['Temperature'] as num,
+      name: json['Name'] as String?,
+      timestamp: json['Timestamp'] as num?,
+      battery: json['Battery'] as num?,
+      coordinates: json['Coordinates'] == null
+          ? null
+          : Coordinates.fromJson(json['Coordinates'] as Map<String, dynamic>),
+      humidity: json['Humidity'] as num?,
+      temperature: json['Temperature'] as num?,
     );
 
 Map<String, dynamic> _$EfotainerToJson(Efotainer instance) => <String, dynamic>{
@@ -26,9 +27,9 @@ Map<String, dynamic> _$EfotainerToJson(Efotainer instance) => <String, dynamic>{
     };
 
 Coordinates _$CoordinatesFromJson(Map<String, dynamic> json) => Coordinates(
-      hash: json['Hash'] as String,
+      hash: json['Hash'] as String?,
       position:
-          (json['Position'] as List<dynamic>).map((e) => e as num).toList(),
+          (json['Position'] as List<dynamic>?)?.map((e) => e as num).toList(),
     );
 
 Map<String, dynamic> _$CoordinatesToJson(Coordinates instance) =>

@@ -8,34 +8,34 @@ part 'efotainer.g.dart';
 @JsonSerializable()
 final class Efotainer {
   const Efotainer({
-    required this.name,
-    required this.timestamp,
-    required this.battery,
-    required this.coordinates,
-    required this.humidity,
-    required this.temperature,
+    this.name,
+    this.timestamp,
+    this.battery,
+    this.coordinates,
+    this.humidity,
+    this.temperature,
   });
 
   factory Efotainer.fromJson(Map<String, dynamic> json) =>
       _$EfotainerFromJson(json);
 
   @JsonKey(name: strings.name)
-  final String name;
+  final String? name;
 
   @JsonKey(name: strings.timestamp)
-  final num timestamp;
+  final num? timestamp;
 
   @JsonKey(name: strings.battery)
-  final num battery;
+  final num? battery;
 
   @JsonKey(name: strings.coordinates)
-  final Coordinates coordinates;
+  final Coordinates? coordinates;
 
   @JsonKey(name: strings.humidity)
-  final num humidity;
+  final num? humidity;
 
   @JsonKey(name: strings.temperature)
-  final num temperature;
+  final num? temperature;
 
   Map<String, dynamic> toJson() => _$EfotainerToJson(this);
 }
@@ -43,18 +43,18 @@ final class Efotainer {
 @JsonSerializable()
 final class Coordinates {
   const Coordinates({
-    required this.hash,
-    required this.position,
+    this.hash,
+    this.position,
   });
 
   factory Coordinates.fromJson(Map<String, dynamic> json) =>
       _$CoordinatesFromJson(json);
 
   @JsonKey(name: strings.hash)
-  final String hash;
+  final String? hash;
 
   @JsonKey(name: strings.position)
-  final List<num> position;
+  final List<num>? position;
 
   Map<String, dynamic> toJson() => _$CoordinatesToJson(this);
 }

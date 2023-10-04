@@ -5,7 +5,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:i_detect/cubits/efotainer_cubit/efotainer_cubit.dart';
+import 'package:i_detect/cubits/efotainer_history_cubit/efotainer_history_cubit.dart';
+import 'package:i_detect/resources/numbers.dart';
+import 'package:i_detect/resources/strings.dart';
+import 'package:i_detect/utils/enums.dart' as enums;
+import 'package:i_detect/utils/extensions/google_map_convenience_utils.dart';
+import 'package:i_detect/views/widgets/bottom_end_widget.dart';
+import 'package:i_detect/views/widgets/params_display_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,160 +21,162 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late final Completer<GoogleMapController> _googleMapController;
+  GoogleMapController? _googleMapController;
+  late final ValueNotifier<bool> _toggleHistory;
 
   @override
   void initState() {
-    _googleMapController = Completer();
-    BlocProvider.of<EfotainerCubit>(context).data;
+    _toggleHistory = ValueNotifier<bool>(
+      false,
+    );
+    _history;
     super.initState();
   }
 
   @override
+  void dispose() {
+    _googleMapController?.dispose();
+    _toggleHistory.dispose();
+    super.dispose();
+  }
+
+  void get _history =>
+      BlocProvider.of<EfotainerHistoryCubit>(context).getHistory(
+        fields: _fields,
+      );
+
+  List<enums.Field> get _fields => [
+        enums.Field.name,
+        enums.Field.timestamp,
+        enums.Field.battery,
+        enums.Field.hash,
+        enums.Field.position,
+        enums.Field.humidity,
+        enums.Field.temperature,
+      ];
+
+  @override
   Widget build(BuildContext context) =>
-      BlocListener<DetailsCubit, DetailsState>(
-        listener: (_, detailsState) async {
-          if (detailsState is LoadingDetailsState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                backgroundColor: Colors.blue,
-                content: Text(
-                  'Loading',
-                ),
-                duration: Duration(
-                  days: 1,
-                ),
-              ),
-            );
-          } else if (detailsState is LoadedDetailsState) {
-            // await (await _googleMapController.future)
-            await (await _googleMapController.future).animateCamera(
-              CameraUpdate.newCameraPosition(
-                CameraPosition(
-                  target: LatLng(
-                    detailsState.efotainer.latitude.toDouble(),
-                    detailsState.efotainer.longitude.toDouble(),
-                  ),
-                  zoom: 16,
-                ),
-              ),
-            );
-          } else if (detailsState is FailedToLoadDetailsState) {
+      BlocListener<EfotainerHistoryCubit, EfotainerHistoryState>(
+        listener: (_, efotainerHistoryState) async {
+          if (efotainerHistoryState is FailedToLoadEfotainerHistoryState) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                backgroundColor: Colors.red,
+                backgroundColor: Theme.of(context).colorScheme.error,
                 content: Text(
-                  detailsState.errorMessage,
+                  efotainerHistoryState.failure.reason,
                 ),
                 duration: const Duration(
-                  seconds: 10,
+                  hours: snackBarDurationHours,
                 ),
                 dismissDirection: DismissDirection.horizontal,
+                action: SnackBarAction(
+                  label: retry,
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  onPressed: () => _history,
+                ),
               ),
+            );
+          } else if (efotainerHistoryState is LoadedEfotainerHistoryState) {
+            await _googleMapController?.animateToAppropriateView(
+              isHistory: _toggleHistory.value,
+              data: efotainerHistoryState.efotainerHistory,
             );
           }
         },
         child: Scaffold(
           body: Stack(
             children: [
-              BlocBuilder<DetailsCubit, DetailsState>(
-                builder: (_, detailsState) => FutureBuilder<BitmapDescriptor>(
-                  future: BitmapDescriptor.fromAssetImage(
-                    ImageConfiguration.empty,
-                    'assets/images/marker_image.png',
-                  ),
-                  builder: (_, snapshot) => GoogleMap(
-                    zoomControlsEnabled: false,
-                    mapType: MapType.hybrid,
-                    initialCameraPosition: const CameraPosition(
-                      target: LatLng(
-                        8.9397589,
-                        7.3182728,
+              FutureBuilder<BitmapDescriptor>(
+                future: BitmapDescriptor.fromAssetImage(
+                  ImageConfiguration.empty,
+                  markerImagePath,
+                ),
+                builder: (
+                  _,
+                  bitmapDescriptorSnapshot,
+                ) =>
+                    BlocBuilder<EfotainerHistoryCubit, EfotainerHistoryState>(
+                  builder: (_, efotainerHistoryState) => ValueListenableBuilder(
+                    valueListenable: _toggleHistory,
+                    builder: (__, toggleHistoryValue, ___) => GoogleMap(
+                      zoomControlsEnabled: false,
+                      initialCameraPosition: const CameraPosition(
+                        target: LatLng(
+                          defaultLat,
+                          defaultLong,
+                        ),
+                        zoom: defaultZoom,
                       ),
-                      zoom: 16,
-                    ),
-                    onMapCreated: (googleMapController) =>
-                        _googleMapController.complete(
-                      googleMapController,
-                    ),
-                    markers: detailsState is LoadedDetailsState
-                        ? <Marker>{
+                      onMapCreated: (googleMapController) =>
+                          _googleMapController = googleMapController,
+                      markers: switch (efotainerHistoryState) {
+                        LoadedEfotainerHistoryState(
+                          efotainerHistory: final history,
+                        )
+                            when toggleHistoryValue =>
+                          history
+                              .map(
+                                (efotainer) => Marker(
+                                  markerId: MarkerId(
+                                    efotainer.coordinates!.hash!,
+                                  ),
+                                  position: LatLng(
+                                    efotainer.coordinates!.position!.first
+                                        .toDouble(),
+                                    efotainer.coordinates!.position!.last
+                                        .toDouble(),
+                                  ),
+                                  icon: switch (bitmapDescriptorSnapshot
+                                          .hasData &&
+                                      bitmapDescriptorSnapshot.data != null) {
+                                    true => bitmapDescriptorSnapshot.data!,
+                                    false => BitmapDescriptor.defaultMarker,
+                                  },
+                                  infoWindow: InfoWindow(
+                                    title: efotainer.name,
+                                  ),
+                                ),
+                              )
+                              .toSet(),
+                        LoadedEfotainerHistoryState(
+                          efotainerHistory: final history,
+                        )
+                            when !toggleHistoryValue =>
+                          <Marker>{
                             Marker(
-                              markerId: const MarkerId(
-                                'efortainer',
+                              markerId: MarkerId(
+                                history.last.coordinates!.hash!,
                               ),
                               position: LatLng(
-                                detailsState.efotainer.latitude.toDouble(),
-                                detailsState.efotainer.longitude.toDouble(),
+                                history.last.coordinates!.position!.first
+                                    .toDouble(),
+                                history.last.coordinates!.position!.last
+                                    .toDouble(),
                               ),
-                              icon: switch (
-                                  snapshot.hasData && snapshot.data != null) {
-                                true => snapshot.data!,
+                              icon: switch (bitmapDescriptorSnapshot.hasData &&
+                                  bitmapDescriptorSnapshot.data != null) {
+                                true => bitmapDescriptorSnapshot.data!,
                                 false => BitmapDescriptor.defaultMarker,
                               },
-                              infoWindow: const InfoWindow(
-                                title: 'Efortainer',
+                              infoWindow: InfoWindow(
+                                title: history.last.name,
                               ),
                             ),
-                          }
-                        : const <Marker>{},
+                          },
+                        _ => const <Marker>{},
+                      },
+                    ),
                   ),
                 ),
               ),
-              // BlocBuilder<DetailsCubit, DetailsState>(
-              //   builder: (_, detailsState) => detailsState is LoadedDetailsState
-              //       ? DetailsView(
-              //           details: detailsState.details,
-              //         )
-              //       : const SizedBox.shrink(),
-              // ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                  ),
-                  child: BlocBuilder<DetailsCubit, DetailsState>(
-                    builder: (_, detailsState) => detailsState
-                            is LoadedDetailsState
-                        ? ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStatePropertyAll<Color>(
-                                Colors.black.withOpacity(
-                                  0.6,
-                                ),
-                              ),
-                              shape: const MaterialStatePropertyAll<
-                                  OutlinedBorder>(
-                                CircleBorder(),
-                              ),
-                            ),
-                            onPressed: () async =>
-                                (await _googleMapController.future)
-                                    .animateCamera(
-                              CameraUpdate.newCameraPosition(
-                                CameraPosition(
-                                  target: LatLng(
-                                    detailsState.efotainer.latitude.toDouble(),
-                                    detailsState.efotainer.longitude.toDouble(),
-                                  ),
-                                  zoom: 16,
-                                ),
-                              ),
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(
-                                8.0,
-                              ),
-                              child: Icon(
-                                Icons.gps_fixed,
-                                size: 32,
-                              ),
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                ),
+              ParamsDisplayWidget(
+                toggleHistory: _toggleHistory,
+              ),
+              BottomEndWidget(
+                googleMapController: _googleMapController,
+                toggleHistory: _toggleHistory,
+                onRefresh: () => _history,
               ),
             ],
           ),
