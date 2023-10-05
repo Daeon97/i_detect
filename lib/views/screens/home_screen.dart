@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:i_detect/cubits/efotainer_history_cubit/efotainer_history_cubit.dart';
+import 'package:i_detect/models/efotainer.dart';
 import 'package:i_detect/resources/numbers.dart';
 import 'package:i_detect/resources/strings.dart';
 import 'package:i_detect/utils/enums.dart' as enums;
 import 'package:i_detect/utils/extensions/google_map_convenience_utils.dart';
+import 'package:i_detect/utils/helpers/time_util.dart';
 import 'package:i_detect/views/widgets/bottom_end_widget.dart';
 import 'package:i_detect/views/widgets/params_display_widget.dart';
 
@@ -23,12 +25,16 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late final Completer<GoogleMapController> _googleMapController;
   late final ValueNotifier<bool> _toggleHistory;
+  late final ValueNotifier<Efotainer?> _selected;
 
   @override
   void initState() {
     _googleMapController = Completer<GoogleMapController>();
     _toggleHistory = ValueNotifier<bool>(
       false,
+    );
+    _selected = ValueNotifier<Efotainer?>(
+      null,
     );
     _history;
     super.initState();
@@ -37,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _toggleHistory.dispose();
+    _selected.dispose();
     super.dispose();
   }
 
@@ -136,8 +143,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                     false => BitmapDescriptor.defaultMarker,
                                   },
                                   infoWindow: InfoWindow(
-                                    title: efotainer.name,
+                                    title: asAt +
+                                        whiteSpace +
+                                        TimeUtil.computeDayMonthYear(
+                                          efotainer.timestamp!,
+                                        ),
                                   ),
+                                  onTap: () => _selected.value = efotainer,
                                 ),
                               )
                               .toSet(),
@@ -162,8 +174,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 false => BitmapDescriptor.defaultMarker,
                               },
                               infoWindow: InfoWindow(
-                                title: history.last.name,
+                                title: asAt +
+                                    whiteSpace +
+                                    TimeUtil.computeDayMonthYear(
+                                      history.last.timestamp!,
+                                    ),
                               ),
+                              onTap: () => _selected.value = null,
                             ),
                           },
                         _ => const <Marker>{},
@@ -173,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               ParamsDisplayWidget(
-                toggleHistory: _toggleHistory,
+                selected: _selected,
               ),
               BottomEndWidget(
                 googleMapController: _googleMapController,

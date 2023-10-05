@@ -33,4 +33,4 @@ const eightyPercent = 80.0;
 
 const zero = 0;
 
-const boundingBoxPadding = 128.0;
+const boundingBoxPadding = 16.0;

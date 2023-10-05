@@ -24,10 +24,12 @@ const closingCurlyBrace = '}';
 const noData = 'No data was returned. Please try again later';
 const error = 'An error occurred';
 const retry = 'Retry';
+const asAt = 'As at';
 
 const _assetsImagesPath = 'assets/images';
 const markerImagePath = '$_assetsImagesPath/marker_image.png';
-const trailImagePath = '$_assetsImagesPath/trail_image.png';
 
 const degreeCelcius = '°C';
 const percentage = '%';
+
+const dateFormatPattern = 'HH:mm dd/MM/yyyy';

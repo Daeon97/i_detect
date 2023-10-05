@@ -35,41 +35,37 @@ class BottomEndWidget extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               BlocBuilder<EfotainerHistoryCubit, EfotainerHistoryState>(
-                builder: (_, efotainerHistoryState) => ValueListenableBuilder(
-                  valueListenable: _toggleHistory,
-                  builder: (__, toggleHistoryValue, ___) => ElevatedButton(
-                    style: ButtonStyle(
-                      shape: const MaterialStatePropertyAll<OutlinedBorder>(
-                        CircleBorder(),
-                      ),
-                      backgroundColor: MaterialStatePropertyAll<Color>(
-                        Theme.of(context).scaffoldBackgroundColor,
-                      ),
-                      padding:
-                          const MaterialStatePropertyAll<EdgeInsetsGeometry>(
-                        EdgeInsetsDirectional.all(
-                          spacing,
-                        ),
-                      ),
-                      elevation: const MaterialStatePropertyAll<double>(
-                        bottomEndWidgetButtonElevation,
+                builder: (_, efotainerHistoryState) => ElevatedButton(
+                  style: ButtonStyle(
+                    shape: const MaterialStatePropertyAll<OutlinedBorder>(
+                      CircleBorder(),
+                    ),
+                    backgroundColor: MaterialStatePropertyAll<Color>(
+                      Theme.of(context).scaffoldBackgroundColor,
+                    ),
+                    padding: const MaterialStatePropertyAll<EdgeInsetsGeometry>(
+                      EdgeInsetsDirectional.all(
+                        spacing,
                       ),
                     ),
-                    onPressed: switch (efotainerHistoryState) {
-                      LoadedEfotainerHistoryState(
-                        efotainerHistory: final history,
-                      ) =>
-                        () async => (await _googleMapController.future)
-                                .animateToAppropriateView(
-                              isHistory: _toggleHistory.value,
-                              data: history,
-                            ),
-                      _ => null,
-                    },
-                    child: const Icon(
-                      Icons.center_focus_weak,
-                      color: bottomEndWidgetButtonIconColor,
+                    elevation: const MaterialStatePropertyAll<double>(
+                      bottomEndWidgetButtonElevation,
                     ),
+                  ),
+                  onPressed: switch (efotainerHistoryState) {
+                    LoadedEfotainerHistoryState(
+                      efotainerHistory: final history,
+                    ) =>
+                      () async => (await _googleMapController.future)
+                              .animateToAppropriateView(
+                            isHistory: _toggleHistory.value,
+                            data: history,
+                          ),
+                    _ => null,
+                  },
+                  child: const Icon(
+                    Icons.center_focus_weak,
+                    color: bottomEndWidgetButtonIconColor,
                   ),
                 ),
               ),
@@ -127,31 +123,26 @@ class BottomEndWidget extends StatelessWidget {
               const SizedBox(
                 height: spacing,
               ),
-              BlocBuilder<EfotainerHistoryCubit, EfotainerHistoryState>(
-                builder: (_, efotainerHistoryState) => ValueListenableBuilder(
-                  valueListenable: _toggleHistory,
-                  builder: (__, toggleHistoryValue, ___) => ElevatedButton(
-                    style: const ButtonStyle(
-                      shape: MaterialStatePropertyAll<OutlinedBorder>(
-                        CircleBorder(),
-                      ),
-                      backgroundColor: MaterialStatePropertyAll<Color>(
-                        baseColor,
-                      ),
-                      padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(
-                        EdgeInsetsDirectional.all(
-                          spacing,
-                        ),
-                      ),
-                      elevation: MaterialStatePropertyAll<double>(
-                        bottomEndWidgetButtonElevation,
-                      ),
-                    ),
-                    onPressed: _onRefresh,
-                    child: const Icon(
-                      Icons.refresh,
+              ElevatedButton(
+                style: const ButtonStyle(
+                  shape: MaterialStatePropertyAll<OutlinedBorder>(
+                    CircleBorder(),
+                  ),
+                  backgroundColor: MaterialStatePropertyAll<Color>(
+                    baseColor,
+                  ),
+                  padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(
+                    EdgeInsetsDirectional.all(
+                      spacing,
                     ),
                   ),
+                  elevation: MaterialStatePropertyAll<double>(
+                    bottomEndWidgetButtonElevation,
+                  ),
+                ),
+                onPressed: _onRefresh,
+                child: const Icon(
+                  Icons.refresh,
                 ),
               ),
             ],
