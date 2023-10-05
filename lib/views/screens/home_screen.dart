@@ -21,11 +21,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  GoogleMapController? _googleMapController;
+  late final Completer<GoogleMapController> _googleMapController;
   late final ValueNotifier<bool> _toggleHistory;
 
   @override
   void initState() {
+    _googleMapController = Completer<GoogleMapController>();
     _toggleHistory = ValueNotifier<bool>(
       false,
     );
@@ -35,7 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    _googleMapController?.dispose();
     _toggleHistory.dispose();
     super.dispose();
   }
@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           } else if (efotainerHistoryState is LoadedEfotainerHistoryState) {
-            await _googleMapController?.animateToAppropriateView(
+            await (await _googleMapController.future).animateToAppropriateView(
               isHistory: _toggleHistory.value,
               data: efotainerHistoryState.efotainerHistory,
             );
@@ -109,7 +109,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         zoom: defaultZoom,
                       ),
                       onMapCreated: (googleMapController) =>
-                          _googleMapController = googleMapController,
+                          _googleMapController.complete(
+                        googleMapController,
+                      ),
                       markers: switch (efotainerHistoryState) {
                         LoadedEfotainerHistoryState(
                           efotainerHistory: final history,

@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -10,7 +12,7 @@ import 'package:i_detect/utils/extensions/google_map_convenience_utils.dart';
 
 class BottomEndWidget extends StatelessWidget {
   const BottomEndWidget({
-    required GoogleMapController? googleMapController,
+    required Completer<GoogleMapController> googleMapController,
     required ValueNotifier<bool> toggleHistory,
     required VoidCallback onRefresh,
     super.key,
@@ -18,7 +20,7 @@ class BottomEndWidget extends StatelessWidget {
         _toggleHistory = toggleHistory,
         _onRefresh = onRefresh;
 
-  final GoogleMapController? _googleMapController;
+  final Completer<GoogleMapController> _googleMapController;
   final ValueNotifier<bool> _toggleHistory;
   final VoidCallback _onRefresh;
 
@@ -57,7 +59,8 @@ class BottomEndWidget extends StatelessWidget {
                       LoadedEfotainerHistoryState(
                         efotainerHistory: final history,
                       ) =>
-                        () => _googleMapController?.animateToAppropriateView(
+                        () async => (await _googleMapController.future)
+                                .animateToAppropriateView(
                               isHistory: _toggleHistory.value,
                               data: history,
                             ),
@@ -101,9 +104,10 @@ class BottomEndWidget extends StatelessWidget {
                       LoadedEfotainerHistoryState(
                         efotainerHistory: final history,
                       ) =>
-                        () {
+                        () async {
                           _toggleHistory.value = !toggleHistoryValue;
-                          _googleMapController?.animateToAppropriateView(
+                          await (await _googleMapController.future)
+                              .animateToAppropriateView(
                             isHistory: _toggleHistory.value,
                             data: history,
                           );
