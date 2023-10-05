@@ -1,0 +1,31 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-efotainer-dev-104715-authRole",
+      "UnauthRoleArn": "arn:aws:iam::580510132728:role/amplify-efotainer-dev-104715-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::580510132728:role/amplify-efotainer-dev-104715-authRole",
+      "Region": "eu-north-1",
+      "DeploymentBucketName": "amplify-efotainer-dev-104715-deployment",
+      "UnauthRoleName": "amplify-efotainer-dev-104715-unauthRole",
+      "StackName": "amplify-efotainer-dev-104715",
+      "StackId": "arn:aws:cloudformation:eu-north-1:580510132728:stack/amplify-efotainer-dev-104715/e0eaafc0-61d1-11ee-a69f-064edf0e4290",
+      "AmplifyAppId": "d3cgdibe3xttn3"
+    },
+    "categories": {
+      "storage": {
+        "iotcoretodynamodbfunctionforefotainerEfotainer1VEDNASSC1ZTF": {
+          "tableName": "iot-core-to-dynamo-db-function-for-efotainer-Efotainer-1VEDNASSC1ZTF",
+          "region": "eu-north-1",
+          "arn": "arn:aws:dynamodb:eu-north-1:580510132728:table/iot-core-to-dynamo-db-function-for-efotainer-Efotainer-1VEDNASSC1ZTF",
+          "partitionKeyName": "Name",
+          "partitionKeyType": "S",
+          "sortKeyName": "Timestamp",
+          "sortKeyType": "N"
+        }
+      },
+      "api": {
+        "efotainer": {}
+      }
+    }
+  }
+}
